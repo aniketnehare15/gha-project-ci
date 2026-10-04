@@ -1,0 +1,23 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: setups-python
+        uses: actions/setup-python@v5
+        with:
+            cache: pip
+      - name: install module from requirement.txt
+        run: pip install -r requirements.txt
+      - name: runs compileall module
+        run: python -m compileall pixelpost
+      - name: test run 
+        run: pytest tests/ --junitxml=junit/test-results.xml
+      - name:  upload junit artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: test-results
+          path: junit/test-results.xml
